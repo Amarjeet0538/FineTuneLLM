@@ -1,0 +1,14 @@
+# secrets
+.env
+
+# python environment (rebuilt from requirements.txt)
+venv/
+__pycache__/
+*.pyc
+
+# model weights (too large for git)
+*.gguf
+
+# personal backups + stale files (not for publishing)
+data/labeled/*_BACKUP.*
+data/labeled/eyeball_50.txt

@@ -1,0 +1,60 @@
+{
+  "smoke_test": false,
+  "model_id": "HuggingFaceTB/SmolLM3-3B",
+  "gpu": "Tesla T4",
+  "data_sha256": {
+    "train_sft.jsonl": "05ef4bd082c226c1e9bf16d1eb84f0d9b5b3e41d34e7cc584188711e0c2a0e3e",
+    "dev_sft.jsonl": "b540834959fb95c2800ed43b9272854eec7fe5b4dda2163ee6f618316901972a"
+  },
+  "add_bos": false,
+  "add_bos_reason": "llama.cpp default for pre-tokenizer 'smaug-bpe'",
+  "ollama_cross_check": {
+    "dev_id": "r00069",
+    "prompt_tokens": 195
+  },
+  "versions": {
+    "torch": "2.10.0+cu128",
+    "transformers": "5.17.0",
+    "peft": "0.21.0",
+    "llama_cpp_commit": "b23efaa2ef147f547ee75cbf0c621d61904de80e"
+  },
+  "settings": {
+    "epochs": 3,
+    "learning_rate": 0.0002,
+    "batch": 4,
+    "grad_accum": 4,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "max_len": 1024,
+    "seed": 42,
+    "quantisation_during_training": "4-bit NF4, double quant, fp16 compute",
+    "lora_targets": "all linear layers",
+    "loss": "answer tokens only"
+  },
+  "examples": {
+    "train": 1057,
+    "dev": 144,
+    "train_dropped_too_long": 0,
+    "dev_dropped_too_long": 1
+  },
+  "train_minutes": 30.2,
+  "dev_loss_by_eval": [
+    [
+      1.0,
+      0.0496017262339592
+    ],
+    [
+      2.0,
+      0.05571276694536209
+    ],
+    [
+      3.0,
+      0.05167092755436897
+    ]
+  ],
+  "best_checkpoint": "checkpoint-67",
+  "best_dev_loss": 0.0496017262339592,
+  "gguf": "smollm3-logtriage-q8_0.gguf",
+  "gguf_gb": 3.28
+}

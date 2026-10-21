@@ -1,0 +1,223 @@
+{
+  "preds_file": "results\\preds_eval_ft_f16.jsonl",
+  "split": "eval",
+  "missing": 0,
+  "truncated_outputs": 1,
+  "ALL": {
+    "metrics": {
+      "n": 329,
+      "parsed_rate": 0.9969604863221885,
+      "strict_rate": 0.9969604863221885,
+      "schema_rate": 0.9969604863221885,
+      "vocab_rate": 0.9969604863221885,
+      "service_acc": 0.7993920972644377,
+      "severity_acc": 0.9574468085106383,
+      "recommended_action_acc": 0.9696048632218845,
+      "id_precision": 0.959417273673257,
+      "id_recall": 0.8822966507177034,
+      "id_f1": 0.9192422731804587,
+      "id_exact_rate": 0.8085106382978723,
+      "action_macro_f1": 0.8824191081145338
+    },
+    "ci95": {
+      "schema_rate": [
+        0.9908814589665653,
+        1.0
+      ],
+      "service_acc": [
+        0.756838905775076,
+        0.8449848024316109
+      ],
+      "severity_acc": [
+        0.9331306990881459,
+        0.9756838905775076
+      ],
+      "recommended_action_acc": [
+        0.9513677811550152,
+        0.9848024316109423
+      ],
+      "action_macro_f1": [
+        0.7864335697491234,
+        0.9518799411656554
+      ],
+      "id_f1": [
+        0.8918918918918918,
+        0.9422400803616273
+      ]
+    }
+  },
+  "seen_template": {
+    "metrics": {
+      "n": 185,
+      "parsed_rate": 0.9945945945945946,
+      "strict_rate": 0.9945945945945946,
+      "schema_rate": 0.9945945945945946,
+      "vocab_rate": 0.9945945945945946,
+      "service_acc": 0.9567567567567568,
+      "severity_acc": 0.9783783783783784,
+      "recommended_action_acc": 0.9837837837837838,
+      "id_precision": 0.9770354906054279,
+      "id_recall": 0.9531568228105907,
+      "id_f1": 0.9649484536082474,
+      "id_exact_rate": 0.9405405405405406,
+      "action_macro_f1": 0.9435625353706848
+    },
+    "ci95": {
+      "schema_rate": [
+        0.9837837837837838,
+        1.0
+      ],
+      "service_acc": [
+        0.9243243243243243,
+        0.9837837837837838
+      ],
+      "severity_acc": [
+        0.9567567567567568,
+        0.9945945945945946
+      ],
+      "recommended_action_acc": [
+        0.9621621621621622,
+        1.0
+      ],
+      "action_macro_f1": [
+        0.8359939759036144,
+        1.0
+      ],
+      "id_f1": [
+        0.9409486931268151,
+        0.9860365198711063
+      ]
+    }
+  },
+  "unseen_template": {
+    "metrics": {
+      "n": 144,
+      "parsed_rate": 1.0,
+      "strict_rate": 1.0,
+      "schema_rate": 1.0,
+      "vocab_rate": 1.0,
+      "service_acc": 0.5972222222222222,
+      "severity_acc": 0.9305555555555556,
+      "recommended_action_acc": 0.9513888888888888,
+      "id_precision": 0.941908713692946,
+      "id_recall": 0.8194945848375451,
+      "id_f1": 0.8764478764478765,
+      "id_exact_rate": 0.6388888888888888,
+      "action_macro_f1": 0.726094470046083
+    },
+    "ci95": {
+      "schema_rate": [
+        1.0,
+        1.0
+      ],
+      "service_acc": [
+        0.5138888888888888,
+        0.6805555555555556
+      ],
+      "severity_acc": [
+        0.8819444444444444,
+        0.9652777777777778
+      ],
+      "recommended_action_acc": [
+        0.9166666666666666,
+        0.9861111111111112
+      ],
+      "action_macro_f1": [
+        0.6524644280022767,
+        0.9717343024429638
+      ],
+      "id_f1": [
+        0.8138728323699422,
+        0.9179834462001505
+      ]
+    }
+  },
+  "action_per_class": {
+    "check_network": {
+      "support": 16,
+      "precision": 0.8888888888888888,
+      "recall": 1.0,
+      "f1": 0.9411764705882353
+    },
+    "escalate_oncall": {
+      "support": 6,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666
+    },
+    "investigate": {
+      "support": 25,
+      "precision": 1.0,
+      "recall": 0.88,
+      "f1": 0.9361702127659575
+    },
+    "no_action": {
+      "support": 282,
+      "precision": 0.9963768115942029,
+      "recall": 0.975177304964539,
+      "f1": 0.985663082437276
+    }
+  },
+  "by_system": {
+    "BGL": {
+      "n": 111,
+      "parsed_rate": 1.0,
+      "strict_rate": 1.0,
+      "schema_rate": 1.0,
+      "vocab_rate": 1.0,
+      "service_acc": 0.9459459459459459,
+      "severity_acc": 0.8918918918918919,
+      "recommended_action_acc": 0.9279279279279279,
+      "id_precision": 0.9458823529411765,
+      "id_recall": 0.9241379310344827,
+      "id_f1": 0.9348837209302325,
+      "id_exact_rate": 0.7927927927927928,
+      "action_macro_f1": 0.876401497053671
+    },
+    "HDFS": {
+      "n": 43,
+      "parsed_rate": 0.9767441860465116,
+      "strict_rate": 0.9767441860465116,
+      "schema_rate": 0.9767441860465116,
+      "vocab_rate": 0.9767441860465116,
+      "service_acc": 0.6511627906976745,
+      "severity_acc": 0.9767441860465116,
+      "recommended_action_acc": 0.9767441860465116,
+      "id_precision": 1.0,
+      "id_recall": 0.8837209302325582,
+      "id_f1": 0.9382716049382717,
+      "id_exact_rate": 0.6976744186046512,
+      "action_macro_f1": 0.9936708860759493
+    },
+    "OpenStack": {
+      "n": 117,
+      "parsed_rate": 1.0,
+      "strict_rate": 1.0,
+      "schema_rate": 1.0,
+      "vocab_rate": 1.0,
+      "service_acc": 0.7350427350427351,
+      "severity_acc": 0.9914529914529915,
+      "recommended_action_acc": 0.9914529914529915,
+      "id_precision": 0.9565217391304348,
+      "id_recall": 0.8301886792452831,
+      "id_f1": 0.888888888888889,
+      "id_exact_rate": 0.8803418803418803,
+      "action_macro_f1": 0.4978540772532189
+    },
+    "Spark": {
+      "n": 58,
+      "parsed_rate": 1.0,
+      "strict_rate": 1.0,
+      "schema_rate": 1.0,
+      "vocab_rate": 1.0,
+      "service_acc": 0.7586206896551724,
+      "severity_acc": 1.0,
+      "recommended_action_acc": 1.0,
+      "id_precision": 0.98,
+      "id_recall": 0.8909090909090909,
+      "id_f1": 0.9333333333333333,
+      "id_exact_rate": 0.7758620689655172,
+      "action_macro_f1": 1.0
+    }
+  }
+}

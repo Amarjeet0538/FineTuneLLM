@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log triage</title>
+<style>
+  /* Everything is local: no fonts or scripts are loaded from the internet, so the page works offline. */
+  :root {
+    --page: #eef1ef;
+    --ink: #1c2421;
+    --ink-soft: #55625d;
+    --rule: #c9d2ce;
+    --slab: #1f2a26;
+    --slab-ink: #dbe8e1;
+    --slab-soft: #8fa59b;
+    --focus: #2f6db5;
+    --warn-bg: #fbf1dc;
+    --warn-ink: #6b4a0e;
+    --err-bg: #f8e1df;
+    --err-ink: #7a1f19;
+    /* the four actions, coloured like triage tags */
+    --no_action: #3e7d5a;
+    --investigate: #a86b12;
+    --check_network: #2f6db5;
+    --escalate_oncall: #c2362f;
+    --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono: "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #161c1a;
+      --ink: #e3ebe7;
+      --ink-soft: #9aaba4;
+      --rule: #34413c;
+      --slab: #0e1311;
+      --slab-ink: #dbe8e1;
+      --slab-soft: #7f958b;
+      --focus: #7fb0ec;
+      --warn-bg: #3a2f17;
+      --warn-ink: #f2d593;
+      --err-bg: #3d1d1a;
+      --err-ink: #f4b4ad;
+      --no_action: #6fbf8e;
+      --investigate: #e0a548;
+      --check_network: #79aef0;
+      --escalate_oncall: #f07a70;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 20px 56px; }
+  h1 { font-size: 1.75rem; line-height: 1.2; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  .lede { margin: 6px 0 0; color: var(--ink-soft); max-width: 62ch; }
+  .status { margin: 14px 0 0; font-size: 0.875rem; color: var(--ink-soft); min-height: 1.3em; }
+  .status.bad { color: var(--err-ink); }
+
+  /* the log line: a terminal strip */
+  .slab { margin-top: 28px; background: var(--slab); border-radius: 6px; padding: 14px 16px 10px; }
+  .slab label { display: block; font-size: 0.8125rem; color: var(--slab-soft); margin-bottom: 6px; }
+  textarea {
+    display: block; width: 100%; min-height: 4.6em; resize: vertical;
+    background: transparent; color: var(--slab-ink); border: 0; padding: 0; margin: 0;
+    font-family: var(--mono); font-size: 0.9375rem; line-height: 1.55;
+  }
+  textarea::placeholder { color: var(--slab-soft); opacity: 1; }
+  textarea:focus { outline: none; }
+  .slab:focus-within { box-shadow: 0 0 0 3px var(--focus); }
+  .slab-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px;
+    font-size: 0.8125rem; color: var(--slab-soft); }
+  .slab-foot .over { color: #f4b4ad; }
+
+  .examples { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .examples span { font-size: 0.875rem; color: var(--ink-soft); margin-right: 2px; }
+  .examples button {
+    font: inherit; font-size: 0.8125rem; color: var(--ink); background: transparent;
+    border: 1px solid var(--rule); border-radius: 999px; padding: 3px 11px; cursor: pointer;
+  }
+  .examples button:hover { border-color: var(--ink-soft); }
+
+  .actions { margin-top: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  #go {
+    font: inherit; font-weight: 600; font-size: 1rem; color: #fff; background: var(--ink);
+    border: 0; border-radius: 6px; padding: 10px 20px; cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) { #go { color: var(--page); } }
+  #go:disabled { opacity: 0.45; cursor: not-allowed; }
+  .hint { font-size: 0.875rem; color: var(--ink-soft); }
+
+  button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .notice { margin-top: 18px; padding: 10px 14px; border-radius: 6px; font-size: 0.9375rem; }
+  .notice.warn { background: var(--warn-bg); color: var(--warn-ink); }
+  .notice.err { background: var(--err-bg); color: var(--err-ink); }
+  .notice p { margin: 0; }
+  .notice p + p { margin-top: 4px; }
+
+  /* the result */
+  #result { margin-top: 36px; border-top: 1px solid var(--rule); padding-top: 24px; }
+  .verdict { border-left: 10px solid var(--tag, var(--rule)); padding: 2px 0 4px 18px; }
+  .verdict .label { font-size: 0.875rem; color: var(--ink-soft); }
+  .verdict .action {
+    font-family: var(--mono); font-weight: 700; color: var(--tag, var(--ink));
+    font-size: clamp(1.75rem, 6vw, 2.75rem); line-height: 1.1; overflow-wrap: anywhere;
+  }
+  .verdict .means { margin-top: 4px; color: var(--ink-soft); font-size: 0.9375rem; }
+
+  dl.fields { margin: 26px 0 0; display: grid; grid-template-columns: 9.5rem 1fr; gap: 12px 16px; }
+  dl.fields dt { color: var(--ink-soft); font-size: 0.9375rem; padding-top: 1px; }
+  dl.fields dd { margin: 0; font-family: var(--mono); font-size: 0.9375rem; overflow-wrap: anywhere; }
+  dl.fields dd .note { display: block; font-family: var(--sans); font-size: 0.8125rem; color: var(--ink-soft); margin-top: 2px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--rule); border-radius: 4px; padding: 1px 7px; }
+  .none { font-family: var(--sans); color: var(--ink-soft); }
+
+  .meta { margin-top: 22px; font-size: 0.8125rem; color: var(--ink-soft); }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; font-size: 0.875rem; color: var(--ink-soft); }
+  pre {
+    margin: 8px 0 0; padding: 12px 14px; background: var(--slab); color: var(--slab-ink);
+    border-radius: 6px; font-family: var(--mono); font-size: 0.8125rem; line-height: 1.5;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+
+  footer { margin-top: 48px; font-size: 0.8125rem; color: var(--ink-soft); max-width: 62ch; }
+  footer a { color: inherit; }
+
+  @media (max-width: 520px) {
+    main { padding-top: 28px; }
+    dl.fields { grid-template-columns: 1fr; gap: 2px 0; }
+    dl.fields dd { margin-bottom: 12px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    #result.fresh .verdict { animation: tag-in 260ms ease-out; }
+    @keyframes tag-in { from { border-left-width: 0; } to { border-left-width: 10px; } }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Log triage</h1>
+  <p class="lede">Paste one raw log line. A fine-tuned small language model reads it and returns a triage record:
+    what to do about it, how severe it is, which service wrote it, and the identifiers it mentions.</p>
+  <p class="status" id="status" role="status">Checking the model...</p>
+
+  <div class="slab">
+    <label for="log">Log line (message text only, without the level or component header)</label>
+    <textarea id="log" maxlength="2000" spellcheck="false" autocomplete="off"
+      placeholder="e.g. rts internal error"></textarea>
+    <div class="slab-foot"><span id="lines"></span><span id="count">0 / 2000</span></div>
+  </div>
+
+  <div class="examples" id="examples">
+    <span>Try an example:</span>
+  </div>
+
+  <div class="actions">
+    <button id="go" type="button" disabled>Triage line</button>
+    <span class="hint" id="hint">Enter to triage, Shift+Enter for a new line</span>
+  </div>
+
+  <div id="problem" hidden></div>
+
+  <section id="result" hidden aria-live="polite">
+    <div class="verdict" id="verdict">
+      <div class="label">Recommended action</div>
+      <div class="action" id="r-action"></div>
+      <div class="means" id="r-means"></div>
+    </div>
+    <dl class="fields">
+      <dt>Severity</dt><dd id="r-severity"></dd>
+      <dt>Service</dt><dd id="r-service"></dd>
+      <dt>Identifiers</dt><dd id="r-ids"></dd>
+    </dl>
+    <div id="r-warn"></div>
+    <p class="meta" id="r-meta"></p>
+    <details id="r-rawbox">
+      <summary>What the model actually wrote</summary>
+      <pre id="r-raw"></pre>
+    </details>
+  </section>
+
+  <footer>
+    The page sends your line to this API's <code>/triage</code> endpoint, which uses exactly the prompt,
+    settings and answer parser that were used to score the model. The raw API and its test page are at
+    <a href="docs">/docs</a>.
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var MAX = 2000;
+  var EXAMPLES = [
+    ["Spark: broadcast read", "Reading broadcast variable 8 took 19 ms"],
+    ["BGL: program image error", "ciod: Error loading /p/gb1/stella/SPPM/1322/sppm_DD: invalid or missing program image, Permission denied"],
+    ["BGL: rts internal error", "rts internal error"],
+    ["BGL: socket timeout", "ciod: Error reading message prefix on CioStream socket to 172.16.96.116:41554, Connection timed out"],
+    ["HDFS: PacketResponder", "PacketResponder 1 for block blk_-165500353496111884 terminating"]
+  ];
+  var MEANS = {
+    no_action: "Routine message. Nothing to do.",
+    investigate: "Something is wrong. Someone should look into it.",
+    check_network: "Looks like a network or connection problem.",
+    escalate_oncall: "Serious failure. Page the on-call engineer."
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var box = $("log"), go = $("go"), busy = false;
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;   // textContent only: nothing from the log or the model is ever run as HTML
+    return e;
+  }
+
+  function notice(target, kind, lines) {
+    var n = el("div", "notice " + kind);
+    lines.forEach(function (t) { n.appendChild(el("p", "", t)); });
+    target.replaceChildren(n);
+    target.hidden = false;
+  }
+
+  function refresh() {
+    var v = box.value, len = v.length;
+    $("count").textContent = len.toLocaleString() + " / " + MAX.toLocaleString();
+    $("count").className = len >= MAX ? "over" : "";
+    $("lines").textContent = /\n/.test(v.trim()) ? "Contains a line break: the model was trained on single lines." : "";
+    go.disabled = busy || v.trim() === "";
+  }
+
+  function detailText(body, status) {
+    var d = body && body.detail;
+    if (typeof d === "string") return d;
+    if (Array.isArray(d)) {
+      var tooLong = d.some(function (x) { return x && x.type === "string_too_long"; });
+      if (tooLong) return "The log line is longer than " + MAX.toLocaleString() + " characters, the most this API accepts.";
+      return d.map(function (x) { return (x && x.msg) || String(x); }).join("; ");
+    }
+    return "The API answered with error " + status + ".";
+  }
+
+  async function checkHealth() {
+    var s = $("status");
+    try {
+      var r = await fetch("health", { cache: "no-store" });
+      var j = await r.json().catch(function () { return null; });
+      if (r.ok && j) {
+        s.textContent = "Model " + j.model + " is ready, running on Ollama " + j.ollama_version + ".";
+        s.className = "status";
+      } else {
+        s.textContent = detailText(j, r.status);
+        s.className = "status bad";
+      }
+    } catch (e) {
+      s.textContent = "Can't reach the API. Check that the server is running.";
+      s.className = "status bad";
+    }
+  }
+
+  function show(res, seconds) {
+    var out = $("result"), r = res.result, warn = [];
+    var action = r ? r.recommended_action : null;
+    var key = action ? action.trim().toLowerCase() : "";
+
+    $("r-action").textContent = action || "No readable answer";
+    $("r-means").textContent = MEANS[key] || (r ? "Not one of the four allowed actions." : "The model's output could not be read as a triage record.");
+    $("verdict").style.setProperty("--tag", MEANS[key] ? "var(--" + key + ")" : "var(--rule)");
+
+    $("r-severity").replaceChildren(r ? el("span", "", r.severity) : el("span", "none", "-"));
+    var svc = $("r-service");
+    svc.replaceChildren(r ? el("span", "", r.service) : el("span", "none", "-"));
+    if (r) svc.appendChild(el("span", "note", "Not in the log text: the model guesses it from the wording, and is often wrong on unfamiliar log patterns."));
+
+    var ids = $("r-ids");
+    if (r && r.identifiers.length) {
+      var c = el("div", "chips");
+      r.identifiers.forEach(function (x) { c.appendChild(el("span", "chip", x)); });
+      ids.replaceChildren(c);
+    } else {
+      ids.replaceChildren(el("span", "none", r ? "None found" : "-"));
+    }
+
+    if (!res.schema_valid) warn.push("The model's output could not be read as the four-field record. What it wrote is shown below.");
+    else if (!res.allowed_values) warn.push("The severity or the action is not one of the allowed values.");
+    if (res.truncated) warn.push("The answer reached the output limit and was cut off.");
+    if (warn.length) notice($("r-warn"), "warn", warn); else { $("r-warn").replaceChildren(); }
+
+    var t = res.tokens || {}, parts = ["Answered in " + seconds.toFixed(1) + " s"];
+    if (res.timing_ms && res.timing_ms.load > 1000) parts.push("including " + (res.timing_ms.load / 1000).toFixed(1) + " s to load the model");
+    if (t.prompt != null && t.output != null) parts.push(t.prompt + " tokens read, " + t.output + " written");
+    parts.push("model " + res.model);
+    $("r-meta").textContent = parts.join(", ") + ".";
+
+    $("r-raw").textContent = res.raw_output;
+    $("r-rawbox").open = !res.schema_valid;
+
+    out.hidden = false;
+    out.classList.remove("fresh"); void out.offsetWidth; out.classList.add("fresh");
+  }
+
+  async function triage() {
+    var text = box.value;
+    if (busy || text.trim() === "") return;
+    busy = true; refresh();
+    go.textContent = "Triaging...";
+    $("hint").textContent = "The first answer can take several seconds while the model loads.";
+    $("problem").hidden = true;
+    var t0 = performance.now();
+    try {
+      var r = await fetch("triage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ log: text })   // JSON.stringify escapes tabs and quotes, so any pasted text is valid JSON
+      });
+      var j = await r.json().catch(function () { return null; });
+      if (!r.ok || !j) {
+        $("result").hidden = true;
+        notice($("problem"), "err", [detailText(j, r.status)]);
+      } else {
+        show(j, (performance.now() - t0) / 1000);
+      }
+    } catch (e) {
+      $("result").hidden = true;
+      notice($("problem"), "err", ["Can't reach the API. Check that the server is running, then try again."]);
+    } finally {
+      busy = false;
+      go.textContent = "Triage line";
+      $("hint").textContent = "Enter to triage, Shift+Enter for a new line";
+      refresh();
+    }
+  }
+
+  EXAMPLES.forEach(function (ex) {
+    var b = el("button", "", ex[0]);
+    b.type = "button";
+    b.addEventListener("click", function () { box.value = ex[1]; refresh(); triage(); });
+    $("examples").appendChild(b);
+  });
+  box.addEventListener("input", refresh);
+  box.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); triage(); }
+  });
+  go.addEventListener("click", triage);
+  refresh();
+  checkHealth();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "frozen_at_utc": "2026-09-19T11:20:30+00:00",
+  "eval_sha256": "91298b2a3377b6dc93fcae89b80b13534040aa07ce961343eee5bd08e88bf4d0",
+  "seed": 42,
+  "settings": {
+    "EVAL_UNSEEN_FRACTION": 0.15,
+    "DEV_UNSEEN_FRACTION": 0.1,
+    "UNSEEN_LINES_CAP": 12,
+    "SEEN_LINES_PER_TEMPLATE": 3,
+    "ACTION_MERGE": {
+      "check_disk": "investigate",
+      "check_auth": "investigate",
+      "restart_service": "investigate"
+    },
+    "ACTIONS": [
+      "no_action",
+      "investigate",
+      "escalate_oncall",
+      "check_network"
+    ],
+    "SEVERITIES": [
+      "INFO",
+      "WARNING",
+      "ERROR",
+      "FATAL"
+    ],
+    "OUTPUT_KEYS": [
+      "service",
+      "severity",
+      "identifiers",
+      "recommended_action"
+    ]
+  },
+  "instructions": "You are a log triage tool. The user message is one log message from a production system (HDFS, BGL, OpenStack or Spark). Reply with ONLY one JSON object and nothing else, with exactly these four keys:\n\"service\": the name of the software component that wrote the message (for example dfs.DataNode or KERNEL).\n\"severity\": one of INFO, WARNING, ERROR, FATAL.\n\"identifiers\": a list of every variable value in the message (IDs, IP addresses, paths, numbers), copied exactly, in the order they appear. Use [] if there are none.\n\"recommended_action\": one of no_action, investigate, escalate_oncall, check_network.",
+  "counts": {
+    "train": 5451,
+    "dev": 145,
+    "eval": 329
+  },
+  "eval_by_kind": {
+    "unseen_template": 144,
+    "seen_template": 185
+  },
+  "eval_by_action": {
+    "no_action": 282,
+    "check_network": 16,
+    "escalate_oncall": 6,
+    "investigate": 25
+  },
+  "review_changes": {
+    "BGL:E80|FATAL": [
+      "investigate",
+      "escalate_oncall"
+    ]
+  },
+  "review_drops": []
+}

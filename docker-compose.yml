@@ -1,0 +1,26 @@
+# Log-triage API in Docker: Ollama 0.34.2 + the FastAPI app.
+#   docker compose up -d --build      start both
+#   http://localhost:8080             the triage page (raw API test page: /docs)
+#   docker compose down               stop both
+# For demonstration only: all reported numbers come from the native Windows setup.
+name: log-triage
+
+services:
+  ollama:
+    image: ollama/ollama:0.34.2          # same Ollama version as all scoring runs
+    volumes:
+      - ollama_data:/root/.ollama        # imported models are kept here between runs
+      - ./models:/models:ro              # your GGUF files + Modelfiles (read-only)
+
+  api:
+    build: .
+    ports:
+      - "8080:8000"                      # 8080 so it never clashes with the Windows API on 8000
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      MODEL: smollm3-ft-q5km
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_data:

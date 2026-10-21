@@ -1,0 +1,101 @@
+{
+  "level": "q4km",
+  "model": "smollm3-ft-q4km",
+  "concurrency": 4,
+  "suffix": "",
+  "started": "2026-10-15T12:33:52+05:30",
+  "finished": "2026-10-15T12:40:13+05:30",
+  "ollama_version": {
+    "before": "0.34.2",
+    "after": "0.34.2"
+  },
+  "runner": {
+    "num_parallel": 4,
+    "args": [
+      "C:\\Users\\shubh\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe",
+      "--model",
+      "C:\\Users\\shubh\\.ollama\\models\\blobs\\sha256-9704e60182316359b35bbc49f09b1b8d8e78da4134fb47b68c81e961a4011d56",
+      "--port",
+      "64054",
+      "--host",
+      "127.0.0.1",
+      "--no-webui",
+      "--offline",
+      "-c",
+      "8192",
+      "-np",
+      "4",
+      "--log-verbosity",
+      "4",
+      "--no-log-prefix",
+      "--no-log-timestamps",
+      "--load-mode",
+      "none",
+      "--flash-attn",
+      "auto",
+      "-b",
+      "1024",
+      "-ub",
+      "1024",
+      "--context-shift",
+      "--keep",
+      "4"
+    ],
+    "threads_from_log": 8
+  },
+  "machine": {
+    "power_mode": "Best performance",
+    "on_charger": true,
+    "ram_free_gb_at_start": 8.84
+  },
+  "settings": {
+    "options": {
+      "temperature": 0,
+      "seed": 42,
+      "num_ctx": 2048,
+      "num_predict": 384,
+      "stop": [
+        "<|im_end|>"
+      ]
+    },
+    "lines": 164,
+    "line_choice": "every second eval line <= 2000 chars",
+    "warmup_lines": 4,
+    "closed_loop_workers": 4
+  },
+  "throughput": {
+    "wall_s": 359.4,
+    "lines_per_minute": 27.38,
+    "output_tokens_per_s": 24.59
+  },
+  "per_request": {
+    "latency_ms_p50": 7983.9,
+    "latency_ms_p95": 14154.8,
+    "ttft_ms_p50": 970.1,
+    "ttft_ms_p95": 2178.0,
+    "decode_tok_s_median": 7.1,
+    "overhead_ms_median": 14.45
+  },
+  "memory": {
+    "runner_peak_mb": 3244.8,
+    "runner_rss_mb_first_eval": 2722.3,
+    "ram_free_gb_lowest": 5.51
+  },
+  "consistency": {
+    "compared": 164,
+    "same_raw_as_week4": 157,
+    "same_record_as_week4": 157,
+    "different_raw_ids": [
+      "r01092",
+      "r01865",
+      "r02345",
+      "r03224",
+      "r04034",
+      "r06003",
+      "r07040"
+    ]
+  },
+  "warnings": [
+    "7 answer(s) differ from Week 4 in raw text (7 differ in the parsed record): ['r01092', 'r01865', 'r02345', 'r03224', 'r04034', 'r06003', 'r07040']"
+  ]
+}

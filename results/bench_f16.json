@@ -1,0 +1,133 @@
+{
+  "level": "f16",
+  "model": "smollm3-ft-f16",
+  "suffix": "",
+  "started": "2026-10-12T02:50:01+05:30",
+  "finished": "2026-10-12T03:50:49+05:30",
+  "minutes": 60.8,
+  "ollama_version": {
+    "before": "0.34.2",
+    "after": "0.34.2"
+  },
+  "runner": {
+    "program": "llama-server",
+    "threads_from_log": 8,
+    "model_blob_sha256": "26167db05b6bf22d01871f60d8d9bbd62373f72d8185f35824a589a2759e7ad8",
+    "week4_file_sha256": "26167db05b6bf22d01871f60d8d9bbd62373f72d8185f35824a589a2759e7ad8",
+    "same_file_as_week4": true,
+    "args": [
+      "C:\\Users\\shubh\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe",
+      "--model",
+      "C:\\Users\\shubh\\.ollama\\models\\blobs\\sha256-26167db05b6bf22d01871f60d8d9bbd62373f72d8185f35824a589a2759e7ad8",
+      "--port",
+      "55613",
+      "--host",
+      "127.0.0.1",
+      "--no-webui",
+      "--offline",
+      "-c",
+      "2048",
+      "-np",
+      "1",
+      "--log-verbosity",
+      "4",
+      "--no-log-prefix",
+      "--no-log-timestamps",
+      "--load-mode",
+      "none",
+      "--flash-attn",
+      "auto",
+      "-b",
+      "512",
+      "-ub",
+      "512",
+      "--context-shift",
+      "--keep",
+      "4"
+    ]
+  },
+  "machine": {
+    "power_mode": "Best performance",
+    "on_charger": true,
+    "cpu_physical_cores": 12,
+    "cpu_logical": 16,
+    "ram_total_gb": 16.79,
+    "ram_free_gb_at_start": 10.36
+  },
+  "settings": {
+    "options": {
+      "temperature": 0,
+      "seed": 42,
+      "num_ctx": 2048,
+      "num_predict": 384,
+      "stop": [
+        "<|im_end|>"
+      ]
+    },
+    "raw": true,
+    "stream": true,
+    "keep_alive": "15m",
+    "eval_lines": 328,
+    "skipped_too_long": [
+      "r01580"
+    ],
+    "cold_loads": 3,
+    "warmup_lines": 3,
+    "percentiles": "linear interpolation (numpy default)",
+    "units": "ms = milliseconds; MB/GB = 10^6/10^9 bytes"
+  },
+  "cold": {
+    "n": 3,
+    "load_ms": [
+      7929.5,
+      6271.3,
+      6266.6
+    ],
+    "ttft_ms": [
+      11600.2,
+      11114.0,
+      11386.5
+    ],
+    "latency_ms": [
+      18082.9,
+      21316.8,
+      21724.6
+    ],
+    "load_ms_median": 6271.3,
+    "ttft_ms_median": 11386.5,
+    "latency_ms_median": 21316.8
+  },
+  "warm": {
+    "n": 328,
+    "ttft_ms_p50": 1098.3,
+    "ttft_ms_p95": 2200.7,
+    "latency_ms_p50": 9914.8,
+    "latency_ms_p95": 17364.7,
+    "latency_ms_mean": 10830.96,
+    "lines_per_minute": 5.54,
+    "overhead_ms_median": 15.1,
+    "decode_tok_s_median": 5.83,
+    "decode_tok_s_overall": 5.78,
+    "prompt_tok_s_median": 32.5,
+    "prompt_tokens_mean": 219.06,
+    "cached_tokens_mean": 178.64,
+    "new_prompt_tokens_mean": 40.42,
+    "output_tokens_mean": 55.34,
+    "length_stops": 0
+  },
+  "memory": {
+    "runner_peak_mb": 6750.3,
+    "runner_private_mb_end": 6971.4,
+    "runner_rss_mb_first_eval": 6413.7,
+    "runner_rss_mb_last_eval": 6750.3,
+    "ollama_ps_size_mb": 6388.5,
+    "ollama_ps_size_vram_mb": 0.0,
+    "ram_free_gb_lowest": 3.76
+  },
+  "consistency": {
+    "same_as_week4": 328,
+    "compared": 328,
+    "different_ids": []
+  },
+  "warnings": []
+}

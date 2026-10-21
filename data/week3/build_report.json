@@ -1,0 +1,47 @@
+{
+  "cap_per_group": 20,
+  "capped_actions": [
+    "no_action"
+  ],
+  "seed": 42,
+  "train_lines_in": 5451,
+  "train_distinct_pairs": 4500,
+  "train_groups": 163,
+  "texts_with_more_than_one_answer": 4,
+  "train_examples_out": 1057,
+  "dev_examples_out": 145,
+  "train_by_action_before": {
+    "no_action": 5145,
+    "check_network": 84,
+    "investigate": 152,
+    "escalate_oncall": 70
+  },
+  "train_by_action_deduplicated": {
+    "no_action": 4353,
+    "check_network": 84,
+    "investigate": 52,
+    "escalate_oncall": 11
+  },
+  "train_by_action_after": {
+    "no_action": 910,
+    "investigate": 52,
+    "check_network": 84,
+    "escalate_oncall": 11
+  },
+  "train_by_system_after": {
+    "OpenStack": 378,
+    "HDFS": 236,
+    "Spark": 218,
+    "BGL": 225
+  },
+  "dev_by_action": {
+    "no_action": 117,
+    "check_network": 11,
+    "escalate_oncall": 2,
+    "investigate": 15
+  },
+  "dev_by_kind": {
+    "seen_template": 55,
+    "unseen_template": 90
+  }
+}

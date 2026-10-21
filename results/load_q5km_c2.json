@@ -1,0 +1,95 @@
+{
+  "level": "q5km",
+  "model": "smollm3-ft-q5km",
+  "concurrency": 2,
+  "suffix": "",
+  "started": "2026-10-15T12:57:35+05:30",
+  "finished": "2026-10-15T13:07:46+05:30",
+  "ollama_version": {
+    "before": "0.34.2",
+    "after": "0.34.2"
+  },
+  "runner": {
+    "num_parallel": 4,
+    "args": [
+      "C:\\Users\\shubh\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe",
+      "--model",
+      "C:\\Users\\shubh\\.ollama\\models\\blobs\\sha256-3b8d15a159385dcfb60e8ca1dc735a47631d6e89c19b7a1df5d15c80d8b26f5a",
+      "--port",
+      "63101",
+      "--host",
+      "127.0.0.1",
+      "--no-webui",
+      "--offline",
+      "-c",
+      "8192",
+      "-np",
+      "4",
+      "--log-verbosity",
+      "4",
+      "--no-log-prefix",
+      "--no-log-timestamps",
+      "--load-mode",
+      "none",
+      "--flash-attn",
+      "auto",
+      "-b",
+      "1024",
+      "-ub",
+      "1024",
+      "--context-shift",
+      "--keep",
+      "4"
+    ],
+    "threads_from_log": 8
+  },
+  "machine": {
+    "power_mode": "Best performance",
+    "on_charger": true,
+    "ram_free_gb_at_start": 9.06
+  },
+  "settings": {
+    "options": {
+      "temperature": 0,
+      "seed": 42,
+      "num_ctx": 2048,
+      "num_predict": 384,
+      "stop": [
+        "<|im_end|>"
+      ]
+    },
+    "lines": 164,
+    "line_choice": "every second eval line <= 2000 chars",
+    "warmup_lines": 2,
+    "closed_loop_workers": 2
+  },
+  "throughput": {
+    "wall_s": 592.9,
+    "lines_per_minute": 16.6,
+    "output_tokens_per_s": 14.79
+  },
+  "per_request": {
+    "latency_ms_p50": 6632.8,
+    "latency_ms_p95": 11886.1,
+    "ttft_ms_p50": 1241.3,
+    "ttft_ms_p95": 2191.1,
+    "decode_tok_s_median": 9.21,
+    "overhead_ms_median": 2.2
+  },
+  "memory": {
+    "runner_peak_mb": 2943.8,
+    "runner_rss_mb_first_eval": 2943.6,
+    "ram_free_gb_lowest": 6.06
+  },
+  "consistency": {
+    "compared": 164,
+    "same_raw_as_week4": 163,
+    "same_record_as_week4": 163,
+    "different_raw_ids": [
+      "r07009"
+    ]
+  },
+  "warnings": [
+    "1 answer(s) differ from Week 4 in raw text (1 differ in the parsed record): ['r07009']"
+  ]
+}

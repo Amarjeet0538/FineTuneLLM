@@ -1,0 +1,9 @@
+# Send Docker ONLY the files the API image needs.
+# This folder also holds venv, data, .env (secrets) and several GB of GGUF models.
+*
+!requirements-serve.txt
+!src/config.py
+!src/run_ollama.py
+!src/score.py
+!src/serve.py
+!src/ui.html
