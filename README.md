@@ -11,12 +11,15 @@ BLOCK* NameSystem.addStoredBlock: blockMap updated: 10.251.74.79:50010 is added 
 Output:
 
 ```json
-{"service": "dfs.DataNode$DataXceiver", "severity": "INFO", "identifiers": ["-2827716238972737794"], "recommended_action": "no_action"}
+{
+  "service": "dfs.DataNode$DataXceiver",
+  "severity": "INFO",
+  "identifiers": ["-2827716238972737794"],
+  "recommended_action": "no_action"
+}
 ```
 
 The question I am actually trying to answer is not whether a 3B model can do this. It is how much accuracy survives when you compress the model to run cheaply, and what each compression level buys you in memory, latency and throughput on ordinary hardware. Measuring that trade-off is the point of the project.
-
-Shubham Alyan, B.Tech Computer Engineering, NIT Kurukshetra.
 
 ## Where it stands
 
@@ -32,18 +35,18 @@ Frozen evaluation set, 329 examples. Every model is served through Ollama 0.34.2
 
 Both models at Q8_0:
 
-| Metric | Untuned | Fine-tuned | Always most-common answer |
-|---|---|---|---|
-| Parsed / schema-valid | 99.1% | 99.7% | - |
-| Strict JSON | 0.0% | 99.7% | - |
-| Action accuracy | 83.3% | 97.0% | 85.7% |
-| Action macro-F1 | 24.3% | 88.2% | 23.1% |
-| Severity accuracy | 66.6% | 95.7% | 84.5% |
-| Service accuracy | 20.1% | 79.9% | 23.1% |
-| Identifier F1 | 29.0% | 92.2% | - |
-| Identifiers exactly right | 2.4% | 81.8% | - |
-| check_network found | 0/16 | 16/16 | 0/16 |
-| escalate_oncall found | 0/6 | 6/6 | 0/6 |
+| Metric                    | Untuned | Fine-tuned | Always most-common answer |
+| ------------------------- | ------- | ---------- | ------------------------- |
+| Parsed / schema-valid     | 99.1%   | 99.7%      | -                         |
+| Strict JSON               | 0.0%    | 99.7%      | -                         |
+| Action accuracy           | 83.3%   | 97.0%      | 85.7%                     |
+| Action macro-F1           | 24.3%   | 88.2%      | 23.1%                     |
+| Severity accuracy         | 66.6%   | 95.7%      | 84.5%                     |
+| Service accuracy          | 20.1%   | 79.9%      | 23.1%                     |
+| Identifier F1             | 29.0%   | 92.2%      | -                         |
+| Identifiers exactly right | 2.4%    | 81.8%      | -                         |
+| check_network found       | 0/16    | 16/16      | 0/16                      |
+| escalate_oncall found     | 0/6     | 6/6        | 0/6                       |
 
 The column that matters is the last one. 86% of the evaluation set is `no_action`, so a model that always answers `no_action` already scores 85.7%, and the untuned model does worse than that. The fine-tuned model beats it on every field, which is the only comparison worth making here.
 
@@ -51,12 +54,12 @@ Ollama updated itself partway through the project (0.32.6 to 0.34.2), so both mo
 
 Broken down by whether the log pattern appeared in training (fine-tuned, Q8_0):
 
-| | seen patterns (185) | unseen patterns (144) |
-|---|---|---|
-| Action accuracy | 98.4% | 95.1% |
-| Severity accuracy | 97.8% | 93.1% |
-| Service accuracy | 95.7% | 59.7% |
-| Identifier F1 | 96.8% | 87.9% |
+|                   | seen patterns (185) | unseen patterns (144) |
+| ----------------- | ------------------- | --------------------- |
+| Action accuracy   | 98.4%               | 95.1%                 |
+| Severity accuracy | 97.8%               | 93.1%                 |
+| Service accuracy  | 95.7%               | 59.7%                 |
+| Identifier F1     | 96.8%               | 87.9%                 |
 
 Unseen patterns are the real test. Service falls off a cliff there because the component name never appears in the input text, so for a new pattern the model has nothing to copy and can only guess from wording.
 
@@ -64,13 +67,13 @@ Unseen patterns are the real test. Service falls off a cliff there because the c
 
 The fine-tuned model at five precision levels:
 
-| Level | Size | Real bits/weight | Action acc | Action macro-F1 | Severity | Service | Identifier F1 | escalate_oncall found (precision) |
-|---|---|---|---|---|---|---|---|---|
-| F16 | 6.16 GB | 16.02 | 97.0% | 88.2% | 95.7% | 79.9% | 91.9% | 6/6 (0.50) |
-| Q8_0 | 3.28 GB | 8.52 | 97.0% | 88.2% | 95.7% | 79.9% | 92.2% | 6/6 (0.50) |
-| Q5_K_M | 2.21 GB | 5.76 | 97.3% | 89.5% | 95.7% | 79.9% | 92.0% | 6/6 (0.50) |
-| Q4_K_M | 1.92 GB | 4.98 | 96.0% | 80.5% | 95.7% | 79.3% | 91.3% | 3/6 (0.38) |
-| Q3_K_M | 1.57 GB | 4.09 | 93.9% | 77.7% | 93.6% | 80.9% | 89.2% | 4/6 (0.27) |
+| Level  | Size    | Real bits/weight | Action acc | Action macro-F1 | Severity | Service | Identifier F1 | escalate_oncall found (precision) |
+| ------ | ------- | ---------------- | ---------- | --------------- | -------- | ------- | ------------- | --------------------------------- |
+| F16    | 6.16 GB | 16.02            | 97.0%      | 88.2%           | 95.7%    | 79.9%   | 91.9%         | 6/6 (0.50)                        |
+| Q8_0   | 3.28 GB | 8.52             | 97.0%      | 88.2%           | 95.7%    | 79.9%   | 92.2%         | 6/6 (0.50)                        |
+| Q5_K_M | 2.21 GB | 5.76             | 97.3%      | 89.5%           | 95.7%    | 79.9%   | 92.0%         | 6/6 (0.50)                        |
+| Q4_K_M | 1.92 GB | 4.98             | 96.0%      | 80.5%           | 95.7%    | 79.3%   | 91.3%         | 3/6 (0.38)                        |
+| Q3_K_M | 1.57 GB | 4.09             | 93.9%      | 77.7%           | 93.6%    | 80.9%   | 89.2%         | 4/6 (0.27)                        |
 
 - F16, Q8_0 and Q5_K_M are the same within noise. Q5_K_M is 64% smaller than F16 with no measurable loss. Its slightly higher macro-F1 is one or two lines, so it is not better, just not worse.
 - Q4_K_M is where the first damage shows, and it lands on the most critical class: only 3 of 6 `escalate_oncall` lines found. Six lines is too few to prove anything, so this is a warning sign rather than a result.
@@ -82,13 +85,13 @@ The fine-tuned model at five precision levels:
 
 The same five models, one request at a time, on the same laptop (Core i5-13500H, CPU only):
 
-| Level | File | Peak RAM | First token (median) | Whole answer (median / 95th pct) | Lines per minute | Writing speed | Prompt reading speed |
-|---|---|---|---|---|---|---|---|
-| Q3_K_M | 1.57 GB | 2.17 GB | 0.96 s | 3.77 / 6.88 s | 14.2 | 18.2 tok/s | 37.1 tok/s |
-| Q4_K_M | 1.92 GB | 2.51 GB | 0.63 s | 3.81 / 6.84 s | 14.1 | 16.1 tok/s | 57.0 tok/s |
-| Q5_K_M | 2.21 GB | 2.80 GB | 1.11 s | 4.50 / 8.22 s | 11.9 | 14.9 tok/s | 32.2 tok/s |
-| Q8_0 | 3.28 GB | 3.87 GB | 1.21 s | 5.97 / 10.79 s | 9.0 | 10.7 tok/s | 29.2 tok/s |
-| F16 | 6.16 GB | 6.75 GB | 1.10 s | 9.91 / 17.36 s | 5.5 | 5.8 tok/s | 32.5 tok/s |
+| Level  | File    | Peak RAM | First token (median) | Whole answer (median / 95th pct) | Lines per minute | Writing speed | Prompt reading speed |
+| ------ | ------- | -------- | -------------------- | -------------------------------- | ---------------- | ------------- | -------------------- |
+| Q3_K_M | 1.57 GB | 2.17 GB  | 0.96 s               | 3.77 / 6.88 s                    | 14.2             | 18.2 tok/s    | 37.1 tok/s           |
+| Q4_K_M | 1.92 GB | 2.51 GB  | 0.63 s               | 3.81 / 6.84 s                    | 14.1             | 16.1 tok/s    | 57.0 tok/s           |
+| Q5_K_M | 2.21 GB | 2.80 GB  | 1.11 s               | 4.50 / 8.22 s                    | 11.9             | 14.9 tok/s    | 32.2 tok/s           |
+| Q8_0   | 3.28 GB | 3.87 GB  | 1.21 s               | 5.97 / 10.79 s                   | 9.0              | 10.7 tok/s    | 29.2 tok/s           |
+| F16    | 6.16 GB | 6.75 GB  | 1.10 s               | 9.91 / 17.36 s                   | 5.5              | 5.8 tok/s     | 32.5 tok/s           |
 
 - Writing speed is limited by memory bandwidth. Writing speed times file size comes out at about 29-36 GB/s for every level, so a smaller file writes proportionally faster. F16 writes about three times slower than Q3_K_M.
 - Prompt reading does not follow file size. Q4_K_M reads prompts at 57 tok/s against 29-37 for the rest, which gives it the fastest first token. On this CPU, llama.cpp rearranges Q4_K weights into a faster layout; it does not do that for Q3_K, Q5_K, Q6_K or Q8_0.
@@ -114,14 +117,14 @@ The untuned model (83.3% accuracy, 24.3% macro-F1) is left off the figure becaus
 
 Q4_K_M and Q5_K_M with Ollama allowed to work on up to four requests together:
 
-| Level | Requests at once | Lines per minute | Whole answer (median / 95th pct) | First token (median) | Peak RAM |
-|---|---|---|---|---|---|
-| Q4_K_M | 1 | 15.02 | 3.55 / 6.64 s | 0.64 s | 2.79 GB |
-| Q4_K_M | 2 | 20.58 | 5.42 / 9.50 s | 0.78 s | 2.95 GB |
-| Q4_K_M | 4 | 27.38 | 7.98 / 14.15 s | 0.97 s | 3.24 GB |
-| Q5_K_M | 1 | 12.48 | 4.24 / 8.04 s | 1.17 s | 2.92 GB |
-| Q5_K_M | 2 | 16.60 | 6.63 / 11.89 s | 1.24 s | 2.94 GB |
-| Q5_K_M | 4 | 18.25 | 11.82 / 22.43 s | 1.45 s | 3.36 GB |
+| Level  | Requests at once | Lines per minute | Whole answer (median / 95th pct) | First token (median) | Peak RAM |
+| ------ | ---------------- | ---------------- | -------------------------------- | -------------------- | -------- |
+| Q4_K_M | 1                | 15.02            | 3.55 / 6.64 s                    | 0.64 s               | 2.79 GB  |
+| Q4_K_M | 2                | 20.58            | 5.42 / 9.50 s                    | 0.78 s               | 2.95 GB  |
+| Q4_K_M | 4                | 27.38            | 7.98 / 14.15 s                   | 0.97 s               | 3.24 GB  |
+| Q5_K_M | 1                | 12.48            | 4.24 / 8.04 s                    | 1.17 s               | 2.92 GB  |
+| Q5_K_M | 2                | 16.60            | 6.63 / 11.89 s                   | 1.24 s               | 2.94 GB  |
+| Q5_K_M | 4                | 18.25            | 11.82 / 22.43 s                  | 1.45 s               | 3.36 GB  |
 
 ![Throughput and time per answer at 1, 2 and 4 requests at once](results/week7_load.png)
 
@@ -233,6 +236,6 @@ The action labels come from a teacher model, and the evaluation labels were revi
 
 The speed numbers are for a model that is already loaded, with Ollama re-using the shared start of the prompt, as it does by default. Threads were left at llama.cpp's automatic choice and not tuned. Peak RAM includes a growth of about 0.34 GB during each run whose cause was not confirmed. Only Q4_K_M and Q5_K_M were load-tested, on half of the evaluation set, and under load the answers are not bit-for-bit repeatable.
 
-## Next 
+## Next
 
 Beyond the project itself, a few things would make the result stronger. Training on more log sources would show whether accuracy on unseen formats actually improves instead of only being measured. Having an expert relabel a sample of the actions would show how far the teacher model's labels sit from real judgement. And comparing against something cheap and non-neural, like nearest-neighbour pattern matching, would show how much the language model is really adding.
