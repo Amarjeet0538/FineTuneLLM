@@ -23,7 +23,7 @@ The question I am actually trying to answer is not whether a 3B model can do thi
 
 ## Where it stands
 
-Done: the dataset, the frozen evaluation set, the untuned baseline, the fine-tune, the quantisation sweep (five levels, all scored on the frozen set), the serving layer (a FastAPI service with a small web page, in front of Ollama, also packaged with Docker), speed and memory benchmarks for every level, a load test, and the accuracy-against-cost figure. The weights for all five levels and the LoRA adapter are public on Hugging Face: [shubham-alyan24/SmolLM3-3B-logtriage-GGUF](https://huggingface.co/shubham-alyan24/SmolLM3-3B-logtriage-GGUF).
+Done: the dataset, the frozen evaluation set, the untuned baseline, the fine-tune, the quantisation sweep (five levels, all scored on the frozen set), the serving layer (a FastAPI service with a small web page, in front of Ollama, also packaged with Docker), speed and memory benchmarks for every level, a load test, and the accuracy-against-cost figure.
 
 Next: the written report.
 
